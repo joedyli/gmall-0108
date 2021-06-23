@@ -1,7 +1,8 @@
-package com.atguigu.gmall.pms.controller;
+package com.atguigu.gmall.wms.controller;
 
 import java.util.List;
 
+import com.atguigu.gmall.wms.entity.WareSkuEntity;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,40 +14,35 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.atguigu.gmall.pms.entity.CategoryEntity;
-import com.atguigu.gmall.pms.service.CategoryService;
+import com.atguigu.gmall.wms.entity.WareEntity;
+import com.atguigu.gmall.wms.service.WareService;
 import com.atguigu.gmall.common.bean.PageResultVo;
 import com.atguigu.gmall.common.bean.ResponseVo;
 import com.atguigu.gmall.common.bean.PageParamVo;
 
 /**
- * 商品三级分类
+ * 仓库信息
  *
  * @author fengge
  * @email fengge@atguigu.com
- * @date 2021-06-22 09:45:01
+ * @date 2021-06-23 15:31:27
  */
-@Api(tags = "商品三级分类 管理")
+@Api(tags = "仓库信息 管理")
 @RestController
-@RequestMapping("pms/category")
-public class CategoryController {
+@RequestMapping("wms/ware")
+public class WareController {
 
     @Autowired
-    private CategoryService categoryService;
+    private WareService wareService;
 
-    @GetMapping("parent/{parentId}")
-    public ResponseVo<List<CategoryEntity>> queryCategoriesByPid(@PathVariable("parentId") Long parentId){
-        List<CategoryEntity> categoryEntities = this.categoryService.queryCategoriesByPid(parentId);
-        return ResponseVo.ok(categoryEntities);
-    }
 
     /**
      * 列表
      */
     @GetMapping
     @ApiOperation("分页查询")
-    public ResponseVo<PageResultVo> queryCategoryByPage(PageParamVo paramVo){
-        PageResultVo pageResultVo = categoryService.queryPage(paramVo);
+    public ResponseVo<PageResultVo> queryWareByPage(PageParamVo paramVo){
+        PageResultVo pageResultVo = wareService.queryPage(paramVo);
 
         return ResponseVo.ok(pageResultVo);
     }
@@ -57,10 +53,10 @@ public class CategoryController {
      */
     @GetMapping("{id}")
     @ApiOperation("详情查询")
-    public ResponseVo<CategoryEntity> queryCategoryById(@PathVariable("id") Long id){
-		CategoryEntity category = categoryService.getById(id);
+    public ResponseVo<WareEntity> queryWareById(@PathVariable("id") Long id){
+		WareEntity ware = wareService.getById(id);
 
-        return ResponseVo.ok(category);
+        return ResponseVo.ok(ware);
     }
 
     /**
@@ -68,8 +64,8 @@ public class CategoryController {
      */
     @PostMapping
     @ApiOperation("保存")
-    public ResponseVo<Object> save(@RequestBody CategoryEntity category){
-		categoryService.save(category);
+    public ResponseVo<Object> save(@RequestBody WareEntity ware){
+		wareService.save(ware);
 
         return ResponseVo.ok();
     }
@@ -79,8 +75,8 @@ public class CategoryController {
      */
     @PostMapping("/update")
     @ApiOperation("修改")
-    public ResponseVo update(@RequestBody CategoryEntity category){
-		categoryService.updateById(category);
+    public ResponseVo update(@RequestBody WareEntity ware){
+		wareService.updateById(ware);
 
         return ResponseVo.ok();
     }
@@ -91,7 +87,7 @@ public class CategoryController {
     @PostMapping("/delete")
     @ApiOperation("删除")
     public ResponseVo delete(@RequestBody List<Long> ids){
-		categoryService.removeByIds(ids);
+		wareService.removeByIds(ids);
 
         return ResponseVo.ok();
     }

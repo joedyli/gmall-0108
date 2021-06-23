@@ -1,5 +1,5 @@
 server:
-  port: 18081
+  port: 18083
 spring:
   cloud:
     nacos:
@@ -19,7 +19,7 @@ spring:
       probability: 1
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://172.16.116.100:3306/guli_pms
+    url: jdbc:mysql://172.16.116.100:3306/guli_wms
     username: root
     password: root
   redis:
@@ -29,11 +29,11 @@ feign:
   sentinel:
     enabled: true
 mybatis-plus:
-  mapper-locations: classpath:mapper/pms/**/*.xml
+  mapper-locations: classpath:mapper/wms/**/*.xml
   global-config:
     db-config:
       id-type: auto
-  type-aliases-package: com.atguigu.gmall.pms.entity
+  type-aliases-package: com.atguigu.gmall.wms.entity
 logging:
   level:
     com.atguigu.gmall: debug
