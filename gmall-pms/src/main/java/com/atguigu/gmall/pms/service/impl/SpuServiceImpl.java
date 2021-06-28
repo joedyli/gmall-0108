@@ -9,6 +9,7 @@ import com.atguigu.gmall.pms.vo.SkuVo;
 import com.atguigu.gmall.pms.vo.SpuAttrValueVo;
 import com.atguigu.gmall.pms.vo.SpuVo;
 import com.atguigu.gmall.sms.vo.SkuSaleVo;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,7 +89,7 @@ public class SpuServiceImpl extends ServiceImpl<SpuMapper, SpuEntity> implements
         return new PageResultVo(page);
     }
 
-    @Transactional
+    @GlobalTransactional
     @Override
     public void bigSave(SpuVo spu) throws FileNotFoundException {
 
@@ -111,11 +112,10 @@ public class SpuServiceImpl extends ServiceImpl<SpuMapper, SpuEntity> implements
         // 1.3. 保存pms_spu_attr_value
         saveBaseAttrs(spu, spuId);
 
-
         // 2.保存sku相关的3张表
         saveSkuInfo(spu, spuId);
 
-        int i = 1/0;
+        //int i = 1/0;
     }
 
     private void saveSkuInfo(SpuVo spu, Long spuId) {
