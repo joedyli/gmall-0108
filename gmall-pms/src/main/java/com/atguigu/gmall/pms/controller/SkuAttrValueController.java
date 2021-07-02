@@ -19,6 +19,8 @@ import com.atguigu.gmall.common.bean.PageResultVo;
 import com.atguigu.gmall.common.bean.ResponseVo;
 import com.atguigu.gmall.common.bean.PageParamVo;
 
+import javax.ws.rs.GET;
+
 /**
  * sku销售属性&值
  *
@@ -33,6 +35,15 @@ public class SkuAttrValueController {
 
     @Autowired
     private SkuAttrValueService skuAttrValueService;
+
+    @GetMapping("search/{cid}")
+    public ResponseVo<List<SkuAttrValueEntity>> querySearchAttrValuesBySkuId(
+            @PathVariable("cid")Long cid,
+            @RequestParam("skuId")Long skuId
+    ){
+        List<SkuAttrValueEntity> skuAttrValueEntities = this.skuAttrValueService.querySearchAttrValuesBySkuId(cid, skuId);
+        return ResponseVo.ok(skuAttrValueEntities);
+    }
 
     /**
      * 列表
