@@ -2,4 +2,19 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.atguigu.gmall.pms.mapper.CategoryMapper">
 
+    <!-- 二级分类的映射关系 -->
+    <resultMap id="categoryMap" type="CategoryEntity" autoMapping="true">
+        <id column="id" property="id"/>
+        <!-- 一对一映射:association -->
+        <!-- 一对多映射 -->
+        <!-- 定义三级分类的映射关系 -->
+        <collection property="subs" select="queryLvl2WithSubsByPid" column="id">
+        </collection>
+    </resultMap>
+
+    <select id="queryLvl2WithSubsByPid" resultMap="categoryMap"
+            parameterType="java.lang.Long">
+        select * from pms_category where parent_id=#{pid}
+    </select>
+
 </mapper>

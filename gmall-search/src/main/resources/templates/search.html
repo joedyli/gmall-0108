@@ -445,7 +445,7 @@
 <script th:inline="javascript">
     let urlParams = decodeURI([[${#httpServletRequest.queryString}]]);
 
-    function cancelProp(prop){
+    function cancelProp(prop){// 5:中文
         urlParams = urlParams.replace('&props=' + prop, '');
         window.location = '/search?' + urlParams;
     }
