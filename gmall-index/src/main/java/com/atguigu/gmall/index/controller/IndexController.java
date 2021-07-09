@@ -32,4 +32,38 @@ public class IndexController {
         return ResponseVo.ok(categoryEntities);
     }
 
+    @GetMapping("index/test/lock")
+    @ResponseBody
+    public ResponseVo testLock(){
+        this.indexService.testLock();
+        return ResponseVo.ok();
+    }
+
+    @GetMapping("index/test/read")
+    @ResponseBody
+    public ResponseVo testRead(){
+        this.indexService.testRead();
+        return ResponseVo.ok();
+    }
+
+    @GetMapping("index/test/write")
+    @ResponseBody
+    public ResponseVo testWrite(){
+        this.indexService.testWrite();
+        return ResponseVo.ok();
+    }
+
+    @GetMapping("index/test/latch")
+    @ResponseBody
+    public ResponseVo testLatch(){
+        this.indexService.testLatch();
+        return ResponseVo.ok("班长锁门。。。。。。");
+    }
+
+    @GetMapping("index/test/countDown")
+    @ResponseBody
+    public ResponseVo testCountDown(){
+        this.indexService.testCountDown();
+        return ResponseVo.ok("出来了一位同学");
+    }
 }
