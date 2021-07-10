@@ -1,7 +1,5 @@
 package com.atguigu.gmall.index.config;
 
-import org.springframework.transaction.TransactionDefinition;
-
 import java.lang.annotation.*;
 
 @Target({ElementType.METHOD})
