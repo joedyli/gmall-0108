@@ -2,4 +2,22 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.atguigu.gmall.pms.mapper.SkuAttrValueMapper">
 
+    <select id="queryMappingBySpuId" resultType="java.util.Map">
+        select GROUP_CONCAT(attr_value ORDER BY attr_id ASC) as attr_values, sku_id
+        from pms_sku_attr_value
+        <!-- 动态sql
+            if: 判断，
+                test中放判断条件
+            choose：选择
+                when：判断，一旦有一个when成立，后续不再执行
+                    test中放判断条件
+                otherwise：所有when都不成立才执行
+            where：添加where关键字，去掉动态sql语句块最前面的一个and|or
+            set：在动态sql语句之前添加set关键字，去掉动态sql语句块最后面一个逗号
+            foreach
+        -->
+        where sku_id in
+            <foreach collection="skuIds" item="skuId" separator="," open="(" close=")">${skuId}</foreach>
+        GROUP BY sku_id
+    </select>
 </mapper>
