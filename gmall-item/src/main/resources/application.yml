@@ -22,3 +22,9 @@ spring:
 feign:
   sentinel:
     enabled: true
+thread:
+  pool:
+    coreSize: 50
+    maxSize: 100
+    keepAlive: 60
+    blockingSize: 500
