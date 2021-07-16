@@ -26,6 +26,29 @@ spring:
     url: jdbc:mysql://172.16.116.100:3306/guli_cart
     username: root
     password: root
+  task:
+    execution:
+      thread-name-prefix: cart-
+      pool:
+        core-size: 100
+        max-size: 500
+        keep-alive: 60s
+        queue-capacity: 5000
+        allow-core-thread-timeout: false
+      shutdown:
+        await-termination: true
+        await-termination-period: 60
+  rabbitmq:
+    host: 172.16.116.100
+    port: 5672
+    virtual-host: /fengge
+    username: fengge
+    password: fengge
+    listener:
+      simple:
+        acknowledge-mode: manual
+        prefetch: 1
+        concurrency: 4
 feign:
   sentinel:
     enabled: true
@@ -34,3 +57,7 @@ jwt:
   cookieName: GMALL-TOKEN
   userKey: user-key
   expire: 15552000
+mybatis-plus:
+  global-config:
+    db-config:
+      id-type: auto

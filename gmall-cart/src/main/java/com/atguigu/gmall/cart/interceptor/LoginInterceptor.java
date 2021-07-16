@@ -44,7 +44,7 @@ public class LoginInterceptor implements HandlerInterceptor {
         String token = CookieUtils.getCookieValue(request, this.properties.getCookieName());
         if (StringUtils.isNotBlank(token)){
             Map<String, Object> map = JwtUtils.getInfoFromToken(token, this.properties.getPublicKey());
-            Long userId = (Long) map.get("userId");
+            Long userId = Long.valueOf(map.get("userId").toString());
             userInfo.setUserId(userId);
         }
 
@@ -59,12 +59,12 @@ public class LoginInterceptor implements HandlerInterceptor {
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-        System.out.println("这是后置方法");
+        //System.out.println("这是后置方法");
     }
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
-        System.out.println("这是完成方法。。。");
+        //System.out.println("这是完成方法。。。");
         // 由于使用的是tomcat线程池，所有请求结束，线程并没有结束，只是回到了线程池，如果不手动释放资源，会导致内存泄漏
         THREAD_LOCAL.remove();
     }

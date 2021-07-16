@@ -50,6 +50,10 @@ spring:
           uri: lb://auth-service
           predicates:
             - Host=sso.gmall.com
+        - id: cart-route
+          uri: lb://cart-service
+          predicates:
+            - Host=cart.gmall.com
 jwt:
   pubFilePath: D:\project-0108\rsa\rsa.pub
   cookieName: GMALL-TOKEN
