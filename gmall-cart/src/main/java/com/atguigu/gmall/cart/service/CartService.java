@@ -64,7 +64,7 @@ public class CartService {
             cart = JSON.parseObject(cartJson, Cart.class);
             cart.setCount(cart.getCount().add(count));
             // 写入数据库redis mysql
-            this.asyncService.updateCart(cart, userId, skuId);
+            this.asyncService.updateCart(userId, skuId, cart);
         } else {
             // 新增记录
             // 查询sku
@@ -93,7 +93,7 @@ public class CartService {
             cart.setCheck(true);
 
             // 写入数据库
-            this.asyncService.insertCart(cart);
+            this.asyncService.insertCart(userId, cart);
             // 添加实时价格缓存
             this.redisTemplate.opsForValue().set(PRICE_PREFIX + skuId, skuEntity.getPrice().toString());
         }
@@ -186,10 +186,10 @@ public class CartService {
                     cart = JSON.parseObject(cartJson, Cart.class);
                     cart.setCount(cart.getCount().add(count));
                     // 写入数据库
-                    this.asyncService.updateCart(cart, userId.toString(), skuId);
+                    this.asyncService.updateCart(userId.toString(), skuId, cart);
                 } else {
                     cart.setUserId(userId.toString());
-                    this.asyncService.insertCart(cart);
+                    this.asyncService.insertCart(userId.toString(), cart);
                 }
                 loginHashOps.put(skuId, JSON.toJSONString(cart));
             });
@@ -227,7 +227,7 @@ public class CartService {
         cart.setCount(count);
 
         hashOps.put(cart.getSkuId().toString(), JSON.toJSONString(cart));
-        this.asyncService.updateCart(cart, userId, cart.getSkuId().toString());
+        this.asyncService.updateCart(userId, cart.getSkuId().toString(), cart);
     }
 
     public void deleteCart(Long skuId) {
@@ -237,5 +237,16 @@ public class CartService {
 
         hashOps.delete(skuId.toString());
         this.asyncService.deleteCartByUserIdAndSkuId(userId, skuId);
+    }
+
+    public List<Cart> queryCheckedCartsByUserId(Long userId) {
+        BoundHashOperations<String, Object, Object> hashOps = this.redisTemplate.boundHashOps(KEY_PREFIX + userId);
+        List<Object> values = hashOps.values();
+        if (CollectionUtils.isEmpty(values)){
+            throw new CartException("您没有选中的购物车记录");
+        }
+
+        return values.stream().map(cartJson -> JSON.parseObject(cartJson.toString(), Cart.class))
+                .filter(Cart::getCheck).collect(Collectors.toList());
     }
 }
