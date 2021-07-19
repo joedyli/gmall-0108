@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
@@ -70,8 +71,10 @@ public class AuthGatewayFilterFactory extends AbstractGatewayFilterFactory<AuthG
                 String token = request.getHeaders().getFirst(properties.getToken());
                 if (StringUtils.isBlank(token)){
                     MultiValueMap<String, HttpCookie> cookies = request.getCookies();
-                    HttpCookie cookie = cookies.getFirst(properties.getCookieName());
-                    token = cookie.getValue();
+                    if (!CollectionUtils.isEmpty(cookies) && cookies.containsKey(properties.getCookieName())){
+                        HttpCookie cookie = cookies.getFirst(properties.getCookieName());
+                        token = cookie.getValue();
+                    }
                 }
 
                 // 3.判断token是否为空，为空则拦截并重定向到登录页面

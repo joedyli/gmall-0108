@@ -21,6 +21,14 @@ spring:
     cache: false
   redis:
     host: 172.16.116.100
+  rabbitmq:
+    host: 172.16.116.100
+    port: 5672
+    virtual-host: /fengge
+    username: fengge
+    password: fengge
+    publisher-confirm-type: correlated
+    publisher-returns: true
 feign:
   sentinel:
     enabled: true
