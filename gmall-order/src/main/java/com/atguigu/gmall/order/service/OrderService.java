@@ -181,12 +181,17 @@ public class OrderService {
             throw new OrderException(JSON.toJSONString(skuLockVos));
         }
 
+//        int i = 1/0;
+
         // 4.创建订单
         UserInfo userInfo = LoginInterceptor.getUserInfo();
         Long userId = userInfo.getUserId();
         try {
             this.omsClient.saveOrder(submitVo, userId);
+            // 发送延时消息，定时关单
+            this.rabbitTemplate.convertAndSend("ORDER_EXCHANGE", "order.ttl", orderToken);
         } catch (Exception e) {
+            // 创建订单出现异常，发送消息标记为无效订单并解锁库存
             this.rabbitTemplate.convertAndSend("ORDER_EXCHANGE", "order.disable", orderToken);
             throw new OrderException("创建订单失败！");
         }

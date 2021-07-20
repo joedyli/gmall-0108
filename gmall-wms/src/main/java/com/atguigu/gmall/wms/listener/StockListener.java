@@ -33,7 +33,7 @@ public class StockListener {
     @RabbitListener(bindings = @QueueBinding(
             value = @Queue("STOCK_UNLOCK_QUEUE"),
             exchange = @Exchange(value = "ORDER_EXCHANGE", ignoreDeclarationExceptions = "true", type = ExchangeTypes.TOPIC),
-            key = {"order.disable"}
+            key = {"order.disable", "stock.unlock"}
     ))
     public void unlock(String orderToken, Channel channel, Message message) throws IOException {
         if (StringUtils.isBlank(orderToken)){
@@ -59,6 +59,43 @@ public class StockListener {
         // 遍历解锁库存
         skuLockVos.forEach(lockVo -> {
             this.wareSkuMapper.unlock(lockVo.getWareSkuId(), lockVo.getCount());
+        });
+
+        // 删除库存锁定的缓存信息
+        this.redisTemplate.delete(KEY_PREFIX + orderToken);
+
+        channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+    }
+
+    @RabbitListener(bindings = @QueueBinding(
+            value = @Queue("STOCK_MINUS_QUEUE"),
+            exchange = @Exchange(value = "ORDER_EXCHANGE", ignoreDeclarationExceptions = "true", type = ExchangeTypes.TOPIC),
+            key = {"stock.minus"}
+    ))
+    public void minus(String orderToken, Channel channel, Message message) throws IOException {
+        if (StringUtils.isBlank(orderToken)){
+            channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+            return;
+        }
+
+        // 查询库存锁定信息
+        String json = this.redisTemplate.opsForValue().get(KEY_PREFIX + orderToken);
+        // 如果库存锁定的缓存为空，直接确认消息
+        if (StringUtils.isBlank(json)){
+            channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+            return ;
+        }
+
+        // 反序列化为库存锁定信息集合
+        List<SkuLockVo> skuLockVos = JSON.parseArray(json, SkuLockVo.class);
+        if (CollectionUtils.isEmpty(skuLockVos)){
+            channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+            return ;
+        }
+
+        // 遍历减库存
+        skuLockVos.forEach(lockVo -> {
+            this.wareSkuMapper.minus(lockVo.getWareSkuId(), lockVo.getCount());
         });
 
         // 删除库存锁定的缓存信息
